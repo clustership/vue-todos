@@ -43,19 +43,36 @@ export default {
       ],
     };
   },
+  mounted() {
+    if (localStorage.getItem('todos')) {
+      try {
+        this.todos = JSON.parse(localStorage.getItem('todos'));
+      } catch(e) {
+        localStorage.removeItem('todos');
+      }
+    }
+  },
   methods: {
     addTodo(newTodo) {
       this.todos.push({ description: newTodo, completed: false });
+      this.storeTodos();
     },
     toggleTodo(todo) {
       todo.completed = !todo.completed;
+      this.storeTodos();
     },
     deleteTodo(deletedTodo) {
       this.todos = this.todos.filter(todo => todo !== deletedTodo);
+      this.storeTodos();
     },
     editTodo(todo, newTodoDescription) {
       todo.description = newTodoDescription;
+      this.storeTodos();
     },
+    storeTodos() {
+      const parsed = JSON.stringify(this.todos);
+      localStorage.setItem('todos', parsed);
+    }
   },
   components: { Todo, CreateTodo },
 };
